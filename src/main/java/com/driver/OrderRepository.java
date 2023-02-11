@@ -1,35 +1,41 @@
 package com.driver;
 
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class OrderRepository {
 
     HashMap<String, Order> orderDb = new HashMap<>();
     HashMap<String, DeliveryPartner> partnerDb = new HashMap<>();
-    HashMap<String, List<String>> pairDb = new HashMap<>();// <orderId, partnerId>
-    HashMap<String, String> assignedDb = new HashMap<>();
-    public void addOrder(Order order) {
+    HashMap<String, List<String>> pairDb = new HashMap<>();
+    HashMap<String, String> assignedDb = new HashMap<>(); // <orderId, partnerId>
+
+    public String addOrder(Order order) {
         orderDb.put(order.getId(), order);
+        return "Added";
     }
 
-    public void addPartner(String partnerId) {
+    public String addPartner(String partnerId) {
         DeliveryPartner partner = new DeliveryPartner(partnerId);
         partnerDb.put(partnerId, partner);
+        return "Added";
     }
 
-    public void addOrderPartnerPair(String orderId, String partnerId) {
+    public String addOrderPartnerPair(String orderId, String partnerId) {
+        // This is basically assigning that order to that partnerId
         List<String> list = pairDb.getOrDefault(partnerId, new ArrayList<>());
         list.add(orderId);
         pairDb.put(partnerId, list);
         assignedDb.put(orderId, partnerId);
         DeliveryPartner partner = partnerDb.get(partnerId);
         partner.setNumberOfOrders(list.size());
+        return "Added";
+
     }
 
     public Order getOrderById(String orderId) {
@@ -49,6 +55,7 @@ public class OrderRepository {
             return partnerDb.get(partnerId);
         }
         return null;
+
     }
 
     public int getOrderCountByPartnerId(String partnerId) {
@@ -71,6 +78,7 @@ public class OrderRepository {
             orders.add(s);
         }
         return orders;
+
     }
 
     public int getCountOfUnassignedOrders() {
@@ -161,4 +169,3 @@ public class OrderRepository {
 
     }
 }
-
